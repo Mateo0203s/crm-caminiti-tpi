@@ -46,15 +46,42 @@ El autor aportó toda la información sobre la empresa: la entrevista al propiet
 
 ### Prompts utilizados y su justificación
 
-Los prompts se transcriben con la ortografía corregida.
+Se transcriben los prompts efectivamente utilizados, en orden cronológico, de forma fiel: con la ortografía corregida y los nombres de personas reemplazados por cargos. Para cada uno se indica el contexto aportado, qué devolvió la IA y qué decidió el autor.
 
-| Prompt del autor | Para qué se usó | Por qué se formuló así |
-|------------------|-----------------|------------------------|
-| "Ahora falta la entrega 3, ¿cómo la continuamos y qué es lo que pide?" (adjuntando las entregas 1 y 2 y la consigna) | Interpretar la consigna y planificar la Entrega 3. | Dar las entregas previas como contexto obligaba a mantener la continuidad con el FODA, las metas y el alcance ya definidos, en lugar de empezar de cero. |
-| "Ya tengo el organigrama" (adjuntando la foto del organigrama institucional) | Redibujar la estructura real con las convenciones normalizadas. | Se prefirió la fuente primaria de la empresa a cualquier estructura supuesta. |
-| "El gerente comercial y el líder de ventas también cuentan como vendedores." | Corregir el análisis del tramo de control y del diccionario de datos. | El organigrama no muestra esa doble función; solo el autor la conocía. |
-| "Tenemos que hacer lo que pide el TP4" (adjuntando la consigna) | Interpretar la Entrega 4 y planificar el BPMN, el repositorio, el tablero y los indicadores. | Se pidió primero la interpretación, para decidir el enfoque antes de producir contenido. |
-| "Es individual, seguí así." | Resolver la revisión de pares en un trabajo individual. | Ante la imposibilidad técnica de aprobar el propio PR, se eligió una autorrevisión formal y declarada en lugar de simular un revisor. |
+#### Entrega 3: estructura formal y diseño de datos
+
+| # | Prompt del autor | Contexto aportado | Qué devolvió la IA | Evaluación crítica y decisión del autor |
+|---|------------------|-------------------|--------------------|------------------------------------------|
+| 1 | "Ahora falta la Entrega 3, ¿cómo la continuamos? ¿Qué es lo que pide?" | Entregas 1 y 2 y la consigna de la Entrega 3. | Interpretación de la consigna. Propuesta de representar a toda la empresa y no un área de sistemas, porque esa área no existe. Primer esquema del diccionario de datos a partir del alcance de la Entrega 2. | Se aceptó representar la empresa completa. Se decidió no presentar ninguna estructura sin validarla antes con el propietario. |
+| 2 | "Comencemos a armar, que a la tarde me junto con el dueño." | Reunión pendiente con el propietario. | Un borrador completo con todas las hipótesis resaltadas en amarillo y una lista de 13 preguntas para la reunión. | El borrador se usó solo como guía de la entrevista. Ningún dato resaltado se entregó sin confirmar. |
+| 3 | "Me faltó pasarte esto." | Plantilla de entregas de la cátedra (.docx). | Adaptación del documento a la estructura de la plantilla y detección de un conflicto: la plantilla usa Calibri 12 con interlineado doble y la consigna pide Arial 11 con 1,5. | Se priorizó la consigna específica de la entrega y se conservó la estructura de la plantilla. |
+| 4 | "Ya tengo el organigrama." | Foto del organigrama institucional de la empresa. | Organigrama redibujado con convenciones normalizadas (rectángulos, cargos en lugar de nombres, staff con líneas de trazos) y un análisis nuevo: la venta y el stock dependen de gerencias distintas. | Se descartó por completo la estructura hipotética del borrador. El autor verificó las dos interpretaciones dudosas de la foto: la ubicación de Sucursal América y la del soporte externo. |
+| 5 | "El gerente comercial y el líder de Ventas también cuentan como vendedores. Lo de la sucursal, que va a cerrar, dejémoslo así. Lo del soporte externo está bien. ¿Está para entregar?" | Conocimiento directo del funcionamiento del área comercial. | Actualización del tramo de control (6 personas que venden) y de los responsables posibles de una cuenta en el diccionario de datos. | Era una información que el organigrama no mostraba y solo el autor conocía. Con ella se confirmó el rango de 5 a 7 usuarios estimado en la Entrega 2. |
+
+#### Adopción del sistema en la empresa (trabajo complementario a las entregas)
+
+| # | Prompt del autor | Contexto aportado | Qué devolvió la IA | Evaluación crítica y decisión del autor |
+|---|------------------|-------------------|--------------------|------------------------------------------|
+| 6 | "Quiero una presentación educativa para el equipo comercial: demostrarles por qué deben usar un CRM, para qué sirve, cómo se usa y qué beneficios tiene, con ejemplos reales." | Las entregas anteriores y la percepción del autor sobre el área de ventas. | Una presentación de 17 diapositivas con casos basados en el relevamiento y una advertencia: un tono descalificador hacia el equipo aumentaría el riesgo de baja adopción (amenaza A1). | Se aceptó el enfoque respetuoso. Los casos se presentaron como situaciones típicas, sin estadísticas inventadas. |
+| 7 | "¿Qué más se le podría ofrecer más allá del CRM? Puedo tener acceso de lectura a la base de datos del ERP." | Posible acceso de solo lectura al ERP. | Propuestas de tablero de gestión, análisis de stock de repuestos y oportunidades a partir de las compras, con advertencias sobre la autorización escrita, el proveedor del ERP y la Ley 25.326 de protección de datos personales. | Se priorizaron el tablero y el análisis de stock como primera etapa de bajo riesgo. Las advertencias se reflejan en el acceso de solo lectura y en el indicador IT-07. |
+| 8 | "Armame una presentación para ir a hablar con la Dirección y vender la propuesta." | El diagnóstico y el plan de las entregas. | Una propuesta de 16 diapositivas con tres pilares, plan por etapas e inversión, con los montos como marcadores vacíos. | Se mantuvieron los montos vacíos: los completa el autor con datos reales, y no se aceptaron cifras inventadas. |
+| 9 | "La idea es que la primera charla sea educativa y que ellos mismos se den cuenta de que necesitan un CRM, no que yo se los venda." | Decisión del autor sobre la estrategia de cambio. | Un taller de 14 diapositivas con ejercicios y un autodiagnóstico, donde el término CRM aparece recién al final. | Fue una corrección de enfoque del autor: pasar de vender la herramienta a que el equipo descubra la necesidad, como estrategia de gestión del cambio frente a la amenaza A1. |
+
+#### Entrega 4: procesos, trabajo colaborativo y control
+
+| # | Prompt del autor | Contexto aportado | Qué devolvió la IA | Evaluación crítica y decisión del autor |
+|---|------------------|-------------------|--------------------|------------------------------------------|
+| 10 | "Tenemos que hacer lo que pide el TP4." | Consigna de la Entrega 4. | Interpretación de las cuatro consignas y dos alertas: las historias de usuario no estaban definidas en las entregas previas, y la revisión de pares requiere otra persona. | Se decidió definir las historias en esta entrega y declararlo, en lugar de presentarlas como preexistentes. |
+| 11 | "Es individual, seguí así." | El trabajo práctico es individual. | Propuesta de autorrevisión formal: plantilla de PR con lista de control, comentario de revisión y correcciones antes de integrar. | Se eligió declarar la autorrevisión en lugar de simular un revisor externo. |
+| 12 | "Sí, con los PDF." | Respuesta a la consulta de la IA antes de publicar el repositorio. | Antes de publicar, la IA detalló qué quedaría público (entregas con la síntesis de la entrevista y el organigrama por cargos) y pidió autorización. | El autor autorizó la publicación; el organigrama ya no incluía nombres de personas. |
+
+### Patrones observados en el uso de la IA
+
+- **Completa vacíos con hipótesis verosímiles.** El primer organigrama dividía Ventas por zonas y agregaba unidades inexistentes. Control aplicado: marcar toda hipótesis como tal y validarla con la fuente primaria antes de entregarla.
+- **Propone estructuras de manual.** El valor del análisis apareció al contrastar esas estructuras con los datos reales de la empresa, como el hallazgo de las dos cadenas de mando.
+- **No se aceptaron cifras sin fuente:** ni estándares de desempeño, ni montos de inversión, ni estadísticas en las presentaciones.
+- **Rinde en tareas instrumentales** (formato, maquetación, BPMN, Git y GitHub), pero cada resultado se verificó: el modelo BPMN con un script, los enlaces del README y la maquetación de cada PDF.
+- **Las decisiones fueron del autor:** el alcance, el enfoque de cada entrega, el tono hacia la empresa y la publicación del repositorio.
 
 ### Correcciones humanas sobre los resultados de la IA
 
