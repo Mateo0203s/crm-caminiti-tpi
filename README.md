@@ -17,3 +17,11 @@ Alcance de la primera versión: clientes, oportunidades por etapa, actividades y
 | Mateo Sarco | Trabajo individual: análisis, diseño y documentación | [@Mateo0203s](https://github.com/Mateo0203s) |
 
 Docente titular: Prof. Gabriela Martínez · Docente tutora: Monica Mut.
+
+## Documentación
+
+| Documento | Contenido |
+|-----------|-----------|
+| [Entrega 1](docs/entregas/entrega-1-organizacion-sistema-abierto.pdf) | La organización como sistema abierto y propuesta del CRM. |
+| [Entrega 2](docs/entregas/entrega-2-diagnostico-y-planeacion.pdf) | FODA, objetivos, metas M1 a M5 y cronograma. |
+| [Entrega 3](docs/entregas/entrega-3-estructura-formal-y-datos.pdf) | Organigrama y diccionario de datos. |
