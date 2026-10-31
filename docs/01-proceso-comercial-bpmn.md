@@ -7,6 +7,20 @@ Modelo del proceso organizativo que el CRM transforma: la gestión de una consul
 - Archivo fuente editable: [`bpmn/proceso-comercial-crm.bpmn`](bpmn/proceso-comercial-crm.bpmn) (BPMN 2.0; se abre en [bpmn.io](https://demo.bpmn.io) o Camunda Modeler).
 - Versión vectorial: [`bpmn/proceso-comercial-crm.svg`](bpmn/proceso-comercial-crm.svg).
 
+## Cómo leer la notación
+
+| Elemento | Significado |
+|----------|-------------|
+| Tarea con ícono de persona | Tarea de usuario: la realiza una persona usando el CRM. |
+| Tarea con ícono de engranaje | Tarea de servicio: la ejecuta el CRM de forma automática. |
+| Tarea con ícono de sobre | Tarea de envío: emite un mensaje hacia otro participante. |
+| Círculo con sobre | Evento de mensaje: el proceso se inicia o se detiene a esperar un mensaje externo. |
+| Círculo con reloj | Evento de temporizador: se activa cuando vence un plazo. |
+| Rombo con X | Compuerta exclusiva: se toma un solo camino según una condición. |
+| Rombo con pentágono | Compuerta basada en eventos: continúa por el primer evento que ocurra. |
+| Línea continua con flecha | Flujo de secuencia dentro de la organización. |
+| Línea punteada | Flujo de mensaje entre participantes distintos. |
+
 ## Participantes (pools)
 
 | Pool | Tipo | Rol en el proceso |
