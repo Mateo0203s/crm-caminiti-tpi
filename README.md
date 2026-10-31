@@ -25,3 +25,13 @@ Docente titular: Prof. Gabriela Martínez · Docente tutora: Monica Mut.
 | [Entrega 1](docs/entregas/entrega-1-organizacion-sistema-abierto.pdf) | La organización como sistema abierto y propuesta del CRM. |
 | [Entrega 2](docs/entregas/entrega-2-diagnostico-y-planeacion.pdf) | FODA, objetivos, metas M1 a M5 y cronograma. |
 | [Entrega 3](docs/entregas/entrega-3-estructura-formal-y-datos.pdf) | Organigrama y diccionario de datos. |
+| [Proceso comercial (BPMN)](docs/01-proceso-comercial-bpmn.md) | Modelo BPMN 2.0 del proceso que el CRM transforma, con pools, lanes y compuertas. |
+| [Historias de usuario](docs/02-historias-de-usuario.md) | HU-01 a HU-03 con criterios de aceptación y trazabilidad. |
+| [Indicadores de control](docs/03-indicadores-de-control.md) | Indicadores del proceso, estándares de desempeño y auditoría técnica. |
+| [Flujo de trabajo con Git](docs/04-flujo-de-trabajo-git.md) | Ramas, convención de commits y revisión de Pull Requests. |
+
+## Gestión del proyecto
+
+- **Tablero ágil:** [CRM Caminiti · Backlog](https://github.com/users/Mateo0203s/projects/1) (GitHub Projects), con las historias de usuario y sus estados *Por hacer*, *En progreso* y *Listo*.
+- **Historias de usuario:** issues [#1](https://github.com/Mateo0203s/crm-caminiti-tpi/issues/1), [#2](https://github.com/Mateo0203s/crm-caminiti-tpi/issues/2) y [#3](https://github.com/Mateo0203s/crm-caminiti-tpi/issues/3).
+- **Pull Requests:** cada documento se integró desde su propia rama mediante un [Pull Request revisado](https://github.com/Mateo0203s/crm-caminiti-tpi/pulls?q=is%3Apr). El trabajo es individual, por lo que la revisión es una autorrevisión formal con lista de control (ver [flujo de trabajo](docs/04-flujo-de-trabajo-git.md)).
