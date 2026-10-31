@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_ProcesoComercial"
+                  targetNamespace="https://github.com/Mateo0203s/crm-caminiti-tpi">
+
+  <bpmn:collaboration id="Collab_ProcesoComercial">
+    <bpmn:participant id="Pool_Cliente" name="Cliente (productor o contratista)" />
+    <bpmn:participant id="Pool_Agencia" name="Agencia de marketing y redes (externa)" />
+    <bpmn:participant id="Pool_Caminiti" name="Caminiti Caminos S.A. - Proceso comercial con CRM" processRef="Proc_Comercial" />
+    <bpmn:messageFlow id="Msg_ConsultaRedes" name="Consulta por redes sociales" sourceRef="Pool_Cliente" targetRef="Pool_Agencia" />
+    <bpmn:messageFlow id="Msg_ConsultaCargada" name="Consulta cargada en el CRM" sourceRef="Pool_Agencia" targetRef="Start_ConsultaRedes" />
+    <bpmn:messageFlow id="Msg_ConsultaDirecta" name="Consulta directa" sourceRef="Pool_Cliente" targetRef="Start_ConsultaDirecta" />
+    <bpmn:messageFlow id="Msg_Presupuesto" name="Presupuesto" sourceRef="Task_EnviarPresupuesto" targetRef="Pool_Cliente" />
+    <bpmn:messageFlow id="Msg_Respuesta" name="Respuesta" sourceRef="Pool_Cliente" targetRef="Catch_RespuestaCliente" />
+  </bpmn:collaboration>
+
+  <bpmn:process id="Proc_Comercial" name="Proceso comercial con CRM" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Comercial">
+      <bpmn:lane id="Lane_Vendedor" name="Vendedor">
+        <bpmn:flowNodeRef>Start_ConsultaDirecta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RegistrarConsulta</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ContactarCliente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_EnviarPresupuesto</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RegistrarActividad</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Catch_RespuestaCliente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Negociar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_Decision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RegistrarGanada</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RegistrarPerdida</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_CRM" name="Sistema CRM (automatizado)">
+        <bpmn:flowNodeRef>Start_ConsultaRedes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_BuscarCliente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_ClienteExiste</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CrearFicha</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_UnirCliente</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_AsignarVendedor</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CrearOportunidad</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_DatosCompletos</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RechazarGuardado</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_Espera</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Timer_Vencimiento</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_AlertarVencida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gw_UnirCierre</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CerrarOportunidad</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Cerrada</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Lider" name="Líder de Ventas">
+        <bpmn:flowNodeRef>Task_RevisarVencida</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="Start_ConsultaDirecta" name="Consulta directa recibida">
+      <bpmn:outgoing>Flow_01</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="Med_ConsultaDirecta" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_RegistrarConsulta" name="Registrar la consulta en el CRM">
+      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_02</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Start_ConsultaRedes" name="Consulta por redes recibida">
+      <bpmn:outgoing>Flow_03</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="Med_ConsultaRedes" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_BuscarCliente" name="Buscar cliente por CUIT o teléfono">
+      <bpmn:incoming>Flow_02</bpmn:incoming>
+      <bpmn:incoming>Flow_03</bpmn:incoming>
+      <bpmn:outgoing>Flow_04</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gw_ClienteExiste" name="¿Cliente existente?">
+      <bpmn:incoming>Flow_04</bpmn:incoming>
+      <bpmn:outgoing>Flow_05</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_CrearFicha" name="Crear ficha del cliente">
+      <bpmn:incoming>Flow_06</bpmn:incoming>
+      <bpmn:outgoing>Flow_07</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gw_UnirCliente">
+      <bpmn:incoming>Flow_05</bpmn:incoming>
+      <bpmn:incoming>Flow_07</bpmn:incoming>
+      <bpmn:outgoing>Flow_08</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_AsignarVendedor" name="Asignar vendedor según la zona del cliente">
+      <bpmn:incoming>Flow_08</bpmn:incoming>
+      <bpmn:outgoing>Flow_09</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_CrearOportunidad" name="Crear oportunidad (etapa Nueva) y notificar">
+      <bpmn:incoming>Flow_09</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_ContactarCliente" name="Contactar al cliente y relevar la necesidad">
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="Task_EnviarPresupuesto" name="Elaborar y enviar presupuesto">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:incoming>Flow_22</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="Task_RegistrarActividad" name="Registrar actividad y próxima acción">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:incoming>Flow_15</bpmn:incoming>
+      <bpmn:incoming>Flow_20</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_DatosCompletos" name="¿Responsable, acción y fecha completos?">
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
+      <bpmn:outgoing>Flow_16</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_RechazarGuardado" name="Rechazar el guardado y pedir los datos">
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:eventBasedGateway id="Gw_Espera">
+      <bpmn:incoming>Flow_16</bpmn:incoming>
+      <bpmn:outgoing>Flow_17</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="Catch_RespuestaCliente" name="Respuesta del cliente">
+      <bpmn:incoming>Flow_17</bpmn:incoming>
+      <bpmn:outgoing>Flow_21</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="Med_Respuesta" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateCatchEvent id="Timer_Vencimiento" name="Vence la próxima acción">
+      <bpmn:incoming>Flow_18</bpmn:incoming>
+      <bpmn:outgoing>Flow_19</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="Ted_Vencimiento" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Task_AlertarVencida" name="Marcar acción vencida y alertar al líder">
+      <bpmn:incoming>Flow_19</bpmn:incoming>
+      <bpmn:outgoing>Flow_19b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_RevisarVencida" name="Revisar la vencida: reprogramar o reasignar">
+      <bpmn:incoming>Flow_19b</bpmn:incoming>
+      <bpmn:outgoing>Flow_20</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Negociar" name="Negociar precio, usado y financiación">
+      <bpmn:incoming>Flow_21</bpmn:incoming>
+      <bpmn:outgoing>Flow_21b</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_Decision" name="¿Acepta?">
+      <bpmn:incoming>Flow_21b</bpmn:incoming>
+      <bpmn:outgoing>Flow_22</bpmn:outgoing>
+      <bpmn:outgoing>Flow_23</bpmn:outgoing>
+      <bpmn:outgoing>Flow_24</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Task_RegistrarGanada" name="Registrar venta ganada">
+      <bpmn:incoming>Flow_23</bpmn:incoming>
+      <bpmn:outgoing>Flow_25</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_RegistrarPerdida" name="Registrar motivo de pérdida">
+      <bpmn:incoming>Flow_24</bpmn:incoming>
+      <bpmn:outgoing>Flow_26</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_UnirCierre">
+      <bpmn:incoming>Flow_25</bpmn:incoming>
+      <bpmn:incoming>Flow_26</bpmn:incoming>
+      <bpmn:outgoing>Flow_27</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_CerrarOportunidad" name="Cerrar oportunidad y actualizar panel e indicadores">
+      <bpmn:incoming>Flow_27</bpmn:incoming>
+      <bpmn:outgoing>Flow_28</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Cerrada" name="Oportunidad cerrada">
+      <bpmn:incoming>Flow_28</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_ConsultaDirecta" targetRef="Task_RegistrarConsulta" />
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_RegistrarConsulta" targetRef="Task_BuscarCliente" />
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Start_ConsultaRedes" targetRef="Task_BuscarCliente" />
+    <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_BuscarCliente" targetRef="Gw_ClienteExiste" />
+    <bpmn:sequenceFlow id="Flow_05" name="Sí" sourceRef="Gw_ClienteExiste" targetRef="Gw_UnirCliente" />
+    <bpmn:sequenceFlow id="Flow_06" name="No" sourceRef="Gw_ClienteExiste" targetRef="Task_CrearFicha" />
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_CrearFicha" targetRef="Gw_UnirCliente" />
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Gw_UnirCliente" targetRef="Task_AsignarVendedor" />
+    <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_AsignarVendedor" targetRef="Task_CrearOportunidad" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_CrearOportunidad" targetRef="Task_ContactarCliente" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_ContactarCliente" targetRef="Task_EnviarPresupuesto" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_EnviarPresupuesto" targetRef="Task_RegistrarActividad" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_RegistrarActividad" targetRef="Gw_DatosCompletos" />
+    <bpmn:sequenceFlow id="Flow_14" name="No" sourceRef="Gw_DatosCompletos" targetRef="Task_RechazarGuardado" />
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_RechazarGuardado" targetRef="Task_RegistrarActividad" />
+    <bpmn:sequenceFlow id="Flow_16" name="Sí" sourceRef="Gw_DatosCompletos" targetRef="Gw_Espera" />
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="Gw_Espera" targetRef="Catch_RespuestaCliente" />
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="Gw_Espera" targetRef="Timer_Vencimiento" />
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="Timer_Vencimiento" targetRef="Task_AlertarVencida" />
+    <bpmn:sequenceFlow id="Flow_19b" sourceRef="Task_AlertarVencida" targetRef="Task_RevisarVencida" />
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_RevisarVencida" targetRef="Task_RegistrarActividad" />
+    <bpmn:sequenceFlow id="Flow_21" sourceRef="Catch_RespuestaCliente" targetRef="Task_Negociar" />
+    <bpmn:sequenceFlow id="Flow_21b" sourceRef="Task_Negociar" targetRef="Gw_Decision" />
+    <bpmn:sequenceFlow id="Flow_22" name="Pide cambios" sourceRef="Gw_Decision" targetRef="Task_EnviarPresupuesto" />
+    <bpmn:sequenceFlow id="Flow_23" name="Sí" sourceRef="Gw_Decision" targetRef="Task_RegistrarGanada" />
+    <bpmn:sequenceFlow id="Flow_24" name="No" sourceRef="Gw_Decision" targetRef="Task_RegistrarPerdida" />
+    <bpmn:sequenceFlow id="Flow_25" sourceRef="Task_RegistrarGanada" targetRef="Gw_UnirCierre" />
+    <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_RegistrarPerdida" targetRef="Gw_UnirCierre" />
+    <bpmn:sequenceFlow id="Flow_27" sourceRef="Gw_UnirCierre" targetRef="Task_CerrarOportunidad" />
+    <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_CerrarOportunidad" targetRef="End_Cerrada" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_ProcesoComercial">
+    <bpmndi:BPMNPlane id="Plane_ProcesoComercial" bpmnElement="Collab_ProcesoComercial">
+      <bpmndi:BPMNShape id="Pool_Cliente_di" bpmnElement="Pool_Cliente" isHorizontal="true">
+        <dc:Bounds x="160" y="40" width="2440" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Pool_Agencia_di" bpmnElement="Pool_Agencia" isHorizontal="true">
+        <dc:Bounds x="420" y="130" width="480" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Pool_Caminiti_di" bpmnElement="Pool_Caminiti" isHorizontal="true">
+        <dc:Bounds x="160" y="220" width="2440" height="580" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Vendedor_di" bpmnElement="Lane_Vendedor" isHorizontal="true">
+        <dc:Bounds x="190" y="220" width="2410" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_CRM_di" bpmnElement="Lane_CRM" isHorizontal="true">
+        <dc:Bounds x="190" y="420" width="2410" height="240" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Lider_di" bpmnElement="Lane_Lider" isHorizontal="true">
+        <dc:Bounds x="190" y="660" width="2410" height="140" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Start_ConsultaDirecta_di" bpmnElement="Start_ConsultaDirecta">
+        <dc:Bounds x="232" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="208" y="345" width="84" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegistrarConsulta_di" bpmnElement="Task_RegistrarConsulta">
+        <dc:Bounds x="300" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_ConsultaRedes_di" bpmnElement="Start_ConsultaRedes">
+        <dc:Bounds x="452" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="425" y="525" width="90" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_BuscarCliente_di" bpmnElement="Task_BuscarCliente">
+        <dc:Bounds x="530" y="460" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_ClienteExiste_di" bpmnElement="Gw_ClienteExiste" isMarkerVisible="true">
+        <dc:Bounds x="690" y="475" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="672" y="446" width="86" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CrearFicha_di" bpmnElement="Task_CrearFicha">
+        <dc:Bounds x="760" y="560" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_UnirCliente_di" bpmnElement="Gw_UnirCliente" isMarkerVisible="true">
+        <dc:Bounds x="930" y="475" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_AsignarVendedor_di" bpmnElement="Task_AsignarVendedor">
+        <dc:Bounds x="1020" y="460" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CrearOportunidad_di" bpmnElement="Task_CrearOportunidad">
+        <dc:Bounds x="1180" y="460" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ContactarCliente_di" bpmnElement="Task_ContactarCliente">
+        <dc:Bounds x="1180" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_EnviarPresupuesto_di" bpmnElement="Task_EnviarPresupuesto">
+        <dc:Bounds x="1340" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegistrarActividad_di" bpmnElement="Task_RegistrarActividad">
+        <dc:Bounds x="1500" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_DatosCompletos_di" bpmnElement="Gw_DatosCompletos" isMarkerVisible="true">
+        <dc:Bounds x="1535" y="475" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1452" y="432" width="80" height="40" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RechazarGuardado_di" bpmnElement="Task_RechazarGuardado">
+        <dc:Bounds x="1410" y="560" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_Espera_di" bpmnElement="Gw_Espera">
+        <dc:Bounds x="1650" y="475" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Catch_RespuestaCliente_di" bpmnElement="Catch_RespuestaCliente">
+        <dc:Bounds x="1757" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1740" y="345" width="70" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Timer_Vencimiento_di" bpmnElement="Timer_Vencimiento">
+        <dc:Bounds x="1757" y="582" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1735" y="625" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_AlertarVencida_di" bpmnElement="Task_AlertarVencida">
+        <dc:Bounds x="1840" y="560" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RevisarVencida_di" bpmnElement="Task_RevisarVencida">
+        <dc:Bounds x="1840" y="690" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Negociar_di" bpmnElement="Task_Negociar">
+        <dc:Bounds x="1840" y="280" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_Decision_di" bpmnElement="Gw_Decision" isMarkerVisible="true">
+        <dc:Bounds x="2000" y="295" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2048" y="330" width="46" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegistrarGanada_di" bpmnElement="Task_RegistrarGanada">
+        <dc:Bounds x="2100" y="228" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegistrarPerdida_di" bpmnElement="Task_RegistrarPerdida">
+        <dc:Bounds x="2100" y="332" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_UnirCierre_di" bpmnElement="Gw_UnirCierre" isMarkerVisible="true">
+        <dc:Bounds x="2275" y="475" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CerrarOportunidad_di" bpmnElement="Task_CerrarOportunidad">
+        <dc:Bounds x="2360" y="460" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Cerrada_di" bpmnElement="End_Cerrada">
+        <dc:Bounds x="2522" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2506" y="525" width="68" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
+        <di:waypoint x="268" y="320" /><di:waypoint x="300" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02">
+        <di:waypoint x="360" y="360" /><di:waypoint x="360" y="440" /><di:waypoint x="590" y="440" /><di:waypoint x="590" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03">
+        <di:waypoint x="488" y="500" /><di:waypoint x="530" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04_di" bpmnElement="Flow_04">
+        <di:waypoint x="650" y="500" /><di:waypoint x="690" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05">
+        <di:waypoint x="740" y="500" /><di:waypoint x="930" y="500" />
+        <bpmndi:BPMNLabel><dc:Bounds x="828" y="482" width="14" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06_di" bpmnElement="Flow_06">
+        <di:waypoint x="715" y="525" /><di:waypoint x="715" y="600" /><di:waypoint x="760" y="600" />
+        <bpmndi:BPMNLabel><dc:Bounds x="722" y="545" width="16" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07_di" bpmnElement="Flow_07">
+        <di:waypoint x="880" y="600" /><di:waypoint x="955" y="600" /><di:waypoint x="955" y="525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08_di" bpmnElement="Flow_08">
+        <di:waypoint x="980" y="500" /><di:waypoint x="1020" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09_di" bpmnElement="Flow_09">
+        <di:waypoint x="1140" y="500" /><di:waypoint x="1180" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="1240" y="460" /><di:waypoint x="1240" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="1300" y="320" /><di:waypoint x="1340" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <di:waypoint x="1460" y="320" /><di:waypoint x="1500" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <di:waypoint x="1560" y="360" /><di:waypoint x="1560" y="475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <di:waypoint x="1560" y="525" /><di:waypoint x="1560" y="600" /><di:waypoint x="1530" y="600" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1565" y="572" width="16" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15">
+        <di:waypoint x="1440" y="560" /><di:waypoint x="1440" y="400" /><di:waypoint x="1530" y="400" /><di:waypoint x="1530" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16_di" bpmnElement="Flow_16">
+        <di:waypoint x="1585" y="500" /><di:waypoint x="1650" y="500" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1600" y="482" width="14" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17_di" bpmnElement="Flow_17">
+        <di:waypoint x="1675" y="475" /><di:waypoint x="1675" y="320" /><di:waypoint x="1757" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18">
+        <di:waypoint x="1675" y="525" /><di:waypoint x="1675" y="600" /><di:waypoint x="1757" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
+        <di:waypoint x="1793" y="600" /><di:waypoint x="1840" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19b_di" bpmnElement="Flow_19b">
+        <di:waypoint x="1900" y="640" /><di:waypoint x="1900" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
+        <di:waypoint x="1840" y="730" /><di:waypoint x="1620" y="730" /><di:waypoint x="1620" y="400" /><di:waypoint x="1590" y="400" /><di:waypoint x="1590" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
+        <di:waypoint x="1793" y="320" /><di:waypoint x="1840" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21b_di" bpmnElement="Flow_21b">
+        <di:waypoint x="1960" y="320" /><di:waypoint x="2000" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_22_di" bpmnElement="Flow_22">
+        <di:waypoint x="2025" y="295" /><di:waypoint x="2025" y="245" /><di:waypoint x="1380" y="245" /><di:waypoint x="1380" y="280" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1680" y="228" width="70" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_23_di" bpmnElement="Flow_23">
+        <di:waypoint x="2050" y="320" /><di:waypoint x="2075" y="320" /><di:waypoint x="2075" y="268" /><di:waypoint x="2100" y="268" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2079" y="284" width="14" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
+        <di:waypoint x="2025" y="345" /><di:waypoint x="2025" y="372" /><di:waypoint x="2100" y="372" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2055" y="375" width="16" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_25_di" bpmnElement="Flow_25">
+        <di:waypoint x="2220" y="268" /><di:waypoint x="2300" y="268" /><di:waypoint x="2300" y="475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26">
+        <di:waypoint x="2220" y="372" /><di:waypoint x="2250" y="372" /><di:waypoint x="2250" y="500" /><di:waypoint x="2275" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27">
+        <di:waypoint x="2325" y="500" /><di:waypoint x="2360" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_28_di" bpmnElement="Flow_28">
+        <di:waypoint x="2480" y="500" /><di:waypoint x="2522" y="500" />
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="Msg_ConsultaRedes_di" bpmnElement="Msg_ConsultaRedes">
+        <di:waypoint x="700" y="100" /><di:waypoint x="700" y="130" />
+        <bpmndi:BPMNLabel><dc:Bounds x="708" y="104" width="150" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_ConsultaCargada_di" bpmnElement="Msg_ConsultaCargada">
+        <di:waypoint x="470" y="190" /><di:waypoint x="470" y="482" />
+        <bpmndi:BPMNLabel><dc:Bounds x="476" y="230" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_ConsultaDirecta_di" bpmnElement="Msg_ConsultaDirecta">
+        <di:waypoint x="250" y="100" /><di:waypoint x="250" y="302" />
+        <bpmndi:BPMNLabel><dc:Bounds x="256" y="150" width="90" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_Presupuesto_di" bpmnElement="Msg_Presupuesto">
+        <di:waypoint x="1420" y="280" /><di:waypoint x="1420" y="100" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1426" y="150" width="70" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Msg_Respuesta_di" bpmnElement="Msg_Respuesta">
+        <di:waypoint x="1775" y="100" /><di:waypoint x="1775" y="302" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1781" y="150" width="60" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
